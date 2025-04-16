@@ -1,0 +1,19 @@
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m -Dmaven.test.failure.ignore=true'  # 允许测试失败继续构建
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'  # 修正版本标识符，使用标准JDK 8命名
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'clean install'  # 增加清理阶段确保构建纯净性
+  env:
+    MAVEN_OPTS: '-XX:+TieredCompilation -XX:TieredStopAtLevel=1'  # 加速编译
